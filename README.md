@@ -12,6 +12,6 @@ Eklenecekler:
 -Aspiration Windows  
 -Time Management  
 -Opening Book ve Endgame Tablebases  
--Bitboard  
 -Principal Variation Search (PVS) veya NegaScout  
--Selective Extensions
+-Selective Extensions     
+-~~Bitboard representation~~
