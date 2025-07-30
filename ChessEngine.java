@@ -3,7 +3,7 @@ import java.util.*;
 
 // Chess Engine class that implements minimax algorithm with alpha-beta pruning
 class ChessEngine {
-    private static final int MAX_DEPTH = 5; // Adjustable search depth
+    private static final int MAX_DEPTH = 4; // Adjustable search depth
     private static final int INFINITY = 100000;
     
     // Piece values for evaluation
