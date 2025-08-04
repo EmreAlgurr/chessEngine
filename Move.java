@@ -14,6 +14,16 @@ class Move {
         this.to = to;
     }
     
+    public Move(Position from, Position to, PieceType promotionPiece) {
+        this.from = from;
+        this.to = to;
+        this.promotionPiece = promotionPiece;
+        this.capturedPiece = null;
+        this.isEnPassant = false;
+        this.isCastling = false;
+        this.prevEnPassantTarget = null;
+    }
+    
     public Move(String fromNotation, String toNotation) {
         this.from = new Position(fromNotation);
         this.to = new Position(toNotation);

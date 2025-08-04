@@ -1,11 +1,10 @@
-
 import java.util.List;
 
 // Abstract base class for all chess pieces
 abstract class Piece {
     protected Color color;
     protected PieceType type;
-    protected boolean hasMoved;
+    boolean hasMoved; // Make package-private instead of protected
     
     public Piece(Color color, PieceType type) {
         this.color = color;

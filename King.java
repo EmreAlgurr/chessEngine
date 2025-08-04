@@ -1,9 +1,9 @@
-
 import java.util.ArrayList;
 import java.util.List;
 
-// King piece implementation
 class King extends Piece {
+    private static final int[] KING_MOVES = {-11, -10, -9, -1, 1, 9, 10, 11};
+    
     public King(Color color) {
         super(color, PieceType.KING);
     }
@@ -15,12 +15,15 @@ class King extends Piece {
     
     @Override
     public List<Move> getPossibleMoves(Position pos, ChessBoard board) {
+        return getPossibleMoves(pos, board, false);
+    }
+
+    public List<Move> getPossibleMoves(Position pos, ChessBoard board, boolean forAttack) {
         List<Move> moves = new ArrayList<>();
-        int[][] directions = {{-1,-1}, {-1,0}, {-1,1}, {0,-1}, {0,1}, {1,-1}, {1,0}, {1,1}};
         
-        for (int[] dir : directions) {
-            Position newPos = new Position(pos.row + dir[0], pos.col + dir[1]);
-            if (isValidPosition(newPos)) {
+        for (int delta : KING_MOVES) {
+            Position newPos = new Position(pos.square + delta);
+            if (newPos.isValid()) {
                 Piece targetPiece = board.getPiece(newPos);
                 if (targetPiece == null || isEnemyPiece(targetPiece)) {
                     moves.add(new Move(pos, newPos));
@@ -28,36 +31,50 @@ class King extends Piece {
             }
         }
         
-        // Castling logic - don't check for check here to avoid recursion
-        if (!hasMoved) {
-            // Kingside castling
-            if (canCastleBasic(board, pos, true)) {
-                moves.add(new Move(pos, new Position(pos.row, pos.col + 2)));
-            }
-            // Queenside castling
-            if (canCastleBasic(board, pos, false)) {
-                moves.add(new Move(pos, new Position(pos.row, pos.col - 2)));
+        // Only generate castling moves if not for attack detection
+        if (!forAttack && !hasMoved) {
+            if (color == Color.WHITE) {
+                if (board.canCastleWhiteKingside && canCastleBasic(board, pos, true, forAttack)) {
+                    moves.add(new Move(pos, new Position(pos.square + 2)));
+                }
+                if (board.canCastleWhiteQueenside && canCastleBasic(board, pos, false, forAttack)) {
+                    moves.add(new Move(pos, new Position(pos.square - 2)));
+                }
+            } else if (color == Color.BLACK) {
+                if (board.canCastleBlackKingside && canCastleBasic(board, pos, true, forAttack)) {
+                    moves.add(new Move(pos, new Position(pos.square + 2)));
+                }
+                if (board.canCastleBlackQueenside && canCastleBasic(board, pos, false, forAttack)) {
+                    moves.add(new Move(pos, new Position(pos.square - 2)));
+                }
             }
         }
         
         return moves;
     }
     
-    private boolean canCastleBasic(ChessBoard board, Position kingPos, boolean kingside) {
-        int rookCol = kingside ? 7 : 0;
-        int direction = kingside ? 1 : -1;
+    private boolean canCastleBasic(ChessBoard board, Position kingPos, boolean kingside, boolean forAttack) {
+        if (forAttack) return false;
         
-        Piece rook = board.getPiece(new Position(kingPos.row, rookCol));
-        if (rook == null || rook.getType() != PieceType.ROOK || rook.hasMoved()) {
+        int rookDelta = kingside ? 3 : -4;
+        Position rookPos = new Position(kingPos.square + rookDelta);
+        Piece rook = board.getPiece(rookPos);
+        
+        if (rook == null || rook.getType() != PieceType.ROOK || rook.getColor() != color || rook.hasMoved()) {
             return false;
         }
         
-        // Check if squares between king and rook are empty
-        int end = kingside ? 6 : 2;
-        for (int col = kingPos.col + direction; col != end + direction; col += direction) {
-            if (board.getPiece(new Position(kingPos.row, col)) != null) {
-                return false;
-            }
+        if (board.isInCheck(color)) return false;
+        
+        // Check squares between king and rook are empty
+        int step = kingside ? 1 : -1;
+        for (int sq = kingPos.square + step; kingside ? sq < rookPos.square : sq > rookPos.square; sq += step) {
+            if (board.getPiece(new Position(sq)) != null) return false;
+        }
+        
+        // Check king doesn't pass through check
+        for (int sq = kingPos.square; kingside ? sq <= kingPos.square + 2 : sq >= kingPos.square - 2; sq += step) {
+            if (board.wouldBeInCheck(color, kingPos, new Position(sq))) return false;
         }
         
         return true;

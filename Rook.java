@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Rook extends Piece {
+    private static final int[] ROOK_DIRECTIONS = {-10, -1, 1, 10};
+    
     public Rook(Color color) {
         super(color, PieceType.ROOK);
     }
@@ -14,17 +16,20 @@ class Rook extends Piece {
     @Override
     public List<Move> getPossibleMoves(Position pos, ChessBoard board) {
         List<Move> moves = new ArrayList<>();
-        int sq = BitboardUtils.posToIndex(pos);
-        long occupancy = BitboardUtils.getOccupancy(board, pos);
-        long targets = BitboardUtils.rookAttacks(sq, occupancy);
-        for (int i = 0; i < 64; i++) {
-            if (((targets >>> i) & 1) != 0) {
-                int row = i / 8, col = i % 8;
-                Position newPos = new Position(row, col);
+        
+        for (int direction : ROOK_DIRECTIONS) {
+            for (int sq = pos.square + direction; ; sq += direction) {
+                Position newPos = new Position(sq);
+                if (!newPos.isValid()) break;
+                
                 Piece targetPiece = board.getPiece(newPos);
-                if (targetPiece == null || isEnemyPiece(targetPiece)) {
+                if (targetPiece == null) {
                     moves.add(new Move(pos, newPos));
-                    if (targetPiece != null) continue; // stop after capture
+                } else {
+                    if (isEnemyPiece(targetPiece)) {
+                        moves.add(new Move(pos, newPos));
+                    }
+                    break; // Stop sliding in this direction
                 }
             }
         }
