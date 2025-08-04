@@ -16,35 +16,9 @@ class ChessBoard {
     public ChessBoard() {
         board = new Piece[120];
         kingPositions = new HashMap<>();
-        initializeBoard();
+      
     }
 
-    private void initializeBoard() {
-        // Clear board
-        for (int i = 0; i < 120; i++) {
-            board[i] = null;
-        }
-        
-        // Set up pawns
-        for (int col = 0; col < 8; col++) {
-            board[31 + col] = new Pawn(Color.BLACK); // Row 1
-            board[81 + col] = new Pawn(Color.WHITE); // Row 6
-        }
-        
-        // Set up other pieces
-        PieceType[] backRank = {PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, 
-                               PieceType.QUEEN, PieceType.KING, PieceType.BISHOP, 
-                               PieceType.KNIGHT, PieceType.ROOK};
-        
-        for (int col = 0; col < 8; col++) {
-            board[21 + col] = createPiece(Color.BLACK, backRank[col]); // Row 0
-            board[91 + col] = createPiece(Color.WHITE, backRank[col]); // Row 7
-        }
-        
-        // Store king positions
-        kingPositions.put(Color.WHITE, new Position(91 + 4)); // e1
-        kingPositions.put(Color.BLACK, new Position(21 + 4)); // e8
-    }
     
     private Piece createPiece(Color color, PieceType type) {
         switch (type) {

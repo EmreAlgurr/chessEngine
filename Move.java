@@ -33,4 +33,20 @@ class Move {
     public String toString() {
         return from.toNotation() + "-" + to.toNotation();
     }
+    
+    public String toUCI() {
+        String uciMove = from.toNotation() + to.toNotation();
+        
+        // Add promotion piece if applicable
+        if (promotionPiece != null) {
+            switch (promotionPiece) {
+                case QUEEN: uciMove += "q"; break;
+                case ROOK: uciMove += "r"; break;
+                case BISHOP: uciMove += "b"; break;
+                case KNIGHT: uciMove += "n"; break;
+            }
+        }
+        
+        return uciMove;
+    }
 }
