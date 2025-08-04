@@ -1,1 +1,1 @@
-Satranç kurallarını doğru yazamamışım sıfırdan başlıyorum. Şu an chesswiki'deki 6 perft pozisyonunu depth 5 için sorunsuz geçiyor. Muhtemelen tüm kurallar doğru şu an. 
+Satranç kurallarını doğru yazamamışım sıfırdan başladım. Şu an chesswiki'deki 6 perft pozisyonunu depth 5 için sorunsuz geçiyor muhtemelen tüm kurallar doğru. 
